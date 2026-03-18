@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Calendar, FileText, Download, MessageSquare, Info, Loader2, User, Phone, Mail, MapPin, Droplets, ShieldAlert, Plus, Sparkles, Activity } from "lucide-react"
+import { Calendar, FileText, Download, MessageSquare, Info, Loader2, User, Phone, Mail, MapPin, Droplets, ShieldAlert, Plus, Sparkles, Activity, Save } from "lucide-react"
 import { useUser, useFirestore, useCollection, useDoc } from "@/firebase"
-import { collection, query, where, orderBy, doc, getDocs } from "firebase/firestore"
+import { collection, query, where, orderBy, doc, getDocs, addDoc, serverTimestamp, updateDoc } from "firebase/firestore"
 import { Button } from "@/components/ui/button"
 import { Badge } from "../ui/badge"
 import { aiPrescriptionExplanation, AIPrescriptionExplanationOutput } from "@/ai/flows/ai-prescription-explanation-flow"
@@ -12,15 +12,28 @@ import { generatePatientSummary, PatientSummaryOutput } from "@/ai/flows/patient
 import { useToast } from "@/hooks/use-toast"
 import { Separator } from "../ui/separator"
 import { format } from "date-fns"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 
 export function PatientView({ viewId }: { viewId: string }) {
   const { user } = useUser()
   const db = useFirestore()
   const { toast } = useToast()
+  
+  // AI States
   const [explaining, setExplaining] = React.useState<string | null>(null)
   const [explanation, setExplanation] = React.useState<AIPrescriptionExplanationOutput | null>(null)
   const [healthSummary, setHealthSummary] = React.useState<PatientSummaryOutput | null>(null)
   const [loadingSummary, setLoadingSummary] = React.useState(false)
+
+  // Modals
+  const [isBookingOpen, setIsBookingOpen] = React.useState(false)
+  const [isEditingProfile, setIsEditingProfile] = React.useState(false)
+
+  // Profile Edit State
+  const [editContact, setEditContact] = React.useState("")
+  const [editBlood, setEditBlood] = React.useState("")
 
   const patientsQuery = React.useMemo(() => 
     user ? query(collection(db, "patients"), where("email", "==", user.email)) : null, 
@@ -79,12 +92,51 @@ export function PatientView({ viewId }: { viewId: string }) {
     }
   }
 
+  const handleBookAppointment = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!patientProfile) return
+    const formData = new FormData(e.currentTarget as HTMLFormElement)
+    try {
+      await addDoc(collection(db, "appointments"), {
+        patientId: patientProfile.id,
+        date: formData.get('date'),
+        time: formData.get('time'),
+        status: 'pending',
+        createdAt: serverTimestamp()
+      })
+      toast({ title: "Appointment Requested", description: "The clinic will confirm your slot soon." })
+      setIsBookingOpen(false)
+    } catch (e) {
+      toast({ title: "Booking failed", variant: "destructive" })
+    }
+  }
+
+  const handleUpdateProfile = async () => {
+    if (!patientProfile) return
+    try {
+      await updateDoc(doc(db, "patients", patientProfile.id), {
+        contact: editContact || patientProfile.contact,
+        bloodGroup: editBlood || patientProfile.bloodGroup
+      })
+      toast({ title: "Profile Updated" })
+      setIsEditingProfile(false)
+    } catch (e) {
+      toast({ title: "Update failed", variant: "destructive" })
+    }
+  }
+
   if (viewId === 'profile') {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Personal Health Profile</h2>
-          <p className="text-muted-foreground">Digital medical identity and biometric records.</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-primary">Personal Health Profile</h2>
+            <p className="text-muted-foreground">Manage your clinical biometrics and contact data.</p>
+          </div>
+          <Button onClick={() => setIsEditingProfile(true)} variant="outline" className="rounded-xl">
+            <Settings className="w-4 h-4 mr-2" />
+            Edit Profile
+          </Button>
         </div>
 
         {patientLoading ? <div className="flex justify-center py-12"><Loader2 className="animate-spin" /></div> : (
@@ -105,10 +157,9 @@ export function PatientView({ viewId }: { viewId: string }) {
                   </div>
                   <div className="flex items-center gap-3 text-sm p-3 bg-white rounded-xl border">
                     <Phone className="w-4 h-4 text-primary" />
-                    <span>{patientProfile?.contact || "+1 (555) 000-0000"}</span>
+                    <span>{patientProfile?.contact || "Not set"}</span>
                   </div>
                 </div>
-                <Button className="w-full h-11 rounded-xl" variant="outline">Edit My Details</Button>
               </CardContent>
             </Card>
 
@@ -117,45 +168,71 @@ export function PatientView({ viewId }: { viewId: string }) {
                 <div className="p-4 bg-white border rounded-2xl shadow-sm text-center">
                   <Droplets className="w-5 h-5 text-destructive mx-auto mb-2" />
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Blood</p>
-                  <p className="text-xl font-black">{patientProfile?.bloodGroup || "O+"}</p>
+                  <p className="text-xl font-black">{patientProfile?.bloodGroup || "—"}</p>
                 </div>
                 <div className="p-4 bg-white border rounded-2xl shadow-sm text-center">
                   <Activity className="w-5 h-5 text-emerald-500 mx-auto mb-2" />
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Age</p>
-                  <p className="text-xl font-black">{patientProfile?.age || "28"}y</p>
+                  <p className="text-xl font-black">{patientProfile?.age || "—"}y</p>
                 </div>
                 <div className="p-4 bg-white border rounded-2xl shadow-sm text-center">
                   <User className="w-5 h-5 text-blue-500 mx-auto mb-2" />
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Sex</p>
-                  <p className="text-xl font-black">{patientProfile?.gender || "F"}</p>
+                  <p className="text-xl font-black">{patientProfile?.gender || "—"}</p>
                 </div>
                 <div className="p-4 bg-white border rounded-2xl shadow-sm text-center">
                   <ShieldAlert className="w-5 h-5 text-amber-500 mx-auto mb-2" />
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Risk</p>
-                  <p className="text-xl font-black">Low</p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Status</p>
+                  <p className="text-xl font-black">Active</p>
                 </div>
               </div>
 
-              <Card className="rounded-2xl">
+              <Card className="rounded-2xl shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-lg">Recent Medical Timeline</CardTitle>
+                  <CardTitle className="text-lg">Recent Visit History</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6 border-l-2 border-muted pl-4">
-                    {appointments?.slice(0, 3).map((app: any) => (
+                    {appointments?.map((app: any) => (
                       <div key={app.id} className="relative">
                         <div className="absolute w-3 h-3 bg-primary rounded-full -left-[23px] top-1 border-2 border-white" />
                         <p className="text-xs font-bold text-muted-foreground mb-1 uppercase tracking-widest">{app.date}</p>
-                        <p className="text-sm font-semibold">Consultation with General Physician</p>
-                        <p className="text-xs text-muted-foreground">{app.status} • Room 302</p>
+                        <p className="text-sm font-semibold">Consultation @ {app.time}</p>
+                        <p className="text-xs text-muted-foreground">Status: <Badge variant="outline" className="h-4 text-[9px] uppercase">{app.status}</Badge></p>
                       </div>
                     ))}
+                    {appointments?.length === 0 && <p className="text-sm text-muted-foreground italic">No past appointments found.</p>}
                   </div>
                 </CardContent>
               </Card>
             </div>
           </div>
         )}
+
+        <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Update Biometrics</DialogTitle>
+              <DialogDescription>Keep your clinical data accurate for better AI analysis.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Contact Number</Label>
+                <Input placeholder={patientProfile?.contact || "+1..."} value={editContact} onChange={(e) => setEditContact(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Blood Group</Label>
+                <Input placeholder={patientProfile?.bloodGroup || "e.g. O+"} value={editBlood} onChange={(e) => setEditBlood(e.target.value)} />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleUpdateProfile} className="gap-2">
+                <Save className="w-4 h-4" />
+                Update Profile
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     )
   }
@@ -167,6 +244,35 @@ export function PatientView({ viewId }: { viewId: string }) {
           <h2 className="text-3xl font-bold tracking-tight text-primary">Patient Portal</h2>
           <p className="text-muted-foreground">Manage your health journeys and prescriptions.</p>
         </div>
+        <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
+          <DialogTrigger asChild>
+            <Button className="rounded-xl h-11 shadow-lg shadow-primary/20">
+              <Plus className="w-4 h-4 mr-2" />
+              Book Appointment
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <form onSubmit={handleBookAppointment}>
+              <DialogHeader>
+                <DialogTitle>Schedule Visit</DialogTitle>
+                <DialogDescription>Choose a date and time for your next consultation.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>Preferred Date</Label>
+                  <Input name="date" type="date" required />
+                </div>
+                <div className="space-y-2">
+                  <Label>Preferred Time</Label>
+                  <Input name="time" type="time" required />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit" className="w-full">Request Slot</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -201,7 +307,7 @@ export function PatientView({ viewId }: { viewId: string }) {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" />
-                  Upcoming & Past Visits
+                  Visits & Requests
                 </CardTitle>
               </CardHeader>
               <CardContent>
