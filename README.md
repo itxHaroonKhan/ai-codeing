@@ -6,7 +6,8 @@ This is the official repository for **HealthFlow AI**, an advanced SaaS platform
 - **Smart AI Diagnosis**: Intelligent symptom analysis for medical professionals.
 - **AI Risk Flagging**: Proactive identification of chronic patient risk patterns.
 - **PDF Lab Analysis**: Automated extraction of insights from medical documents.
-- **Patient Portal**: Clear, AI-driven explanations of prescriptions and health history.
+- **AI Health Summary**: Automated clinical snapshot of patient history.
+- **Patient Portal**: AI-driven explanations of prescriptions and health biometrics.
 - **Role-Based Dashboards**: Customized views for Admins, Doctors, Receptionists, and Patients.
 
 ## 🛠️ Tech Stack
