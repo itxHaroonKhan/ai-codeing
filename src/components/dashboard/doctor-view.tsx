@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -13,8 +12,7 @@ import { useFirestore, useCollection, useUser } from "@/firebase"
 import { collection, query, where, orderBy, addDoc, serverTimestamp, doc, updateDoc, getDocs } from "firebase/firestore"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -239,19 +237,6 @@ export function DoctorView({ viewId }: { viewId: string }) {
             <Button variant="ghost" onClick={() => setIsConsultOpen(false)} className="rounded-xl">Discard</Button>
             <Button onClick={handleSaveConsult} className="rounded-xl h-12 px-10 font-bold shadow-xl shadow-primary/20">Finalize Patient Consult</Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isMessagesOpen} onOpenChange={setIsMessagesOpen}>
-        <DialogContent className="max-w-md rounded-[2.5rem]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-black">Messages</DialogTitle>
-          </DialogHeader>
-          <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 opacity-50">
-            <MessageCircle className="w-16 h-16 mb-4 text-primary" />
-            <p className="font-bold">Patient Chat System</p>
-            <p className="text-sm">Secure direct messaging is being initialized.</p>
-          </div>
         </DialogContent>
       </Dialog>
     </div>

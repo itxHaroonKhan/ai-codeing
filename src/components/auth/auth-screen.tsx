@@ -67,12 +67,11 @@ export function AuthScreen({ onBack }: AuthScreenProps) {
     const provider = new GoogleAuthProvider()
     try {
       const { user } = await signInWithPopup(auth, provider)
-      // Check if user profile exists, if not create default as Patient
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         name: user.displayName,
         email: user.email,
-        role: 'Patient', // Default role for Google login
+        role: 'Patient',
         createdAt: serverTimestamp(),
         status: 'active'
       }, { merge: true })
@@ -127,14 +126,6 @@ export function AuthScreen({ onBack }: AuthScreenProps) {
                     {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Mail className="w-4 h-4 mr-2" />}
                     Sign In with Email
                   </Button>
-                  <div className="relative w-full">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
                   <Button variant="outline" className="w-full" type="button" onClick={handleGoogleAuth} disabled={loading}>
                     Sign In with Google
                   </Button>
@@ -170,16 +161,13 @@ export function AuthScreen({ onBack }: AuthScreenProps) {
                     <Label>Join as</Label>
                     <select 
                       name="role" 
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm ring-offset-background"
+                      className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
                       defaultValue="Patient"
                     >
                       <option value="Patient">Patient</option>
                       <option value="Doctor">Doctor</option>
                       <option value="Receptionist">Receptionist</option>
                     </select>
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Note: Admin roles must be assigned by existing administrators.
-                    </p>
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4">

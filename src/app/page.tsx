@@ -50,7 +50,7 @@ export default function Page() {
             <div className="bg-primary p-2 rounded-xl group-hover:rotate-12 transition-transform shadow-lg shadow-primary/20">
               <Stethoscope className="text-primary-foreground w-6 h-6" />
             </div>
-            <span className="text-xl font-black tracking-tighter text-primary">HealthFlow AI</span>
+            <span className="text-xl font-black tracking-tighter text-primary uppercase">HealthFlow AI</span>
           </div>
           <div className="flex gap-4 items-center">
             <Button variant="ghost" size="icon" onClick={() => setIsDark(!isDark)} className="rounded-xl">
@@ -164,11 +164,11 @@ export default function Page() {
 
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-end">
-                <span className="text-sm font-black text-slate-900 dark:text-white leading-none">{profile?.name}</span>
+                <span className="text-sm font-black text-slate-900 dark:text-white leading-none">{profile?.name || user?.displayName}</span>
                 <span className="text-[10px] font-bold text-primary uppercase tracking-tighter mt-1">{role} Mode</span>
               </div>
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold border-2 border-primary/20">
-                {profile?.name?.charAt(0)}
+                {(profile?.name || user?.displayName || 'U').charAt(0)}
               </div>
             </div>
           </div>
