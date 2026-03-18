@@ -1,8 +1,9 @@
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatsCard } from "./stats-card"
-import { Users, Stethoscope, DollarSign, Activity, UserPlus, MoreHorizontal, BadgeCheck } from "lucide-react"
+import { Users, Stethoscope, DollarSign, Activity, UserPlus, MoreHorizontal, BadgeCheck, Settings, Bell, Globe, Shield } from "lucide-react"
 import { 
   BarChart, 
   Bar, 
@@ -18,6 +19,8 @@ import { MOCK_USERS } from "@/lib/mock-data"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 
 const data = [
   { name: 'Jan', appointments: 400, revenue: 2400 },
@@ -89,10 +92,73 @@ export function AdminView({ viewId }: { viewId: string }) {
     )
   }
 
+  if (viewId === 'settings') {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Clinic Settings</h2>
+          <p className="text-muted-foreground">Configure global clinic parameters and security.</p>
+        </div>
+        
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                General Configuration
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Online Booking</Label>
+                  <p className="text-sm text-muted-foreground">Allow patients to book appointments via portal.</p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>AI Diagnostics</Label>
+                  <p className="text-sm text-muted-foreground">Enable AI suggestion engine for doctors.</p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Privacy & Security
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Two-Factor Auth</Label>
+                  <p className="text-sm text-muted-foreground">Enforce 2FA for all medical staff.</p>
+                </div>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>HIPAA Logging</Label>
+                  <p className="text-sm text-muted-foreground">Detailed activity logs for compliance.</p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Admin Console</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-primary">Admin Console</h2>
         <p className="text-muted-foreground">System overview and analytics.</p>
       </div>
 
@@ -125,7 +191,7 @@ export function AdminView({ viewId }: { viewId: string }) {
         <Card>
           <CardHeader>
             <CardTitle>Revenue Analytics</CardTitle>
-            <CardDescription>Simulated financial performance tracking.</CardDescription>
+            <CardDescription>Financial performance tracking.</CardDescription>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
