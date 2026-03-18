@@ -26,6 +26,9 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { Role } from "@/lib/mock-data"
+import { useAuth } from "@/firebase"
+import { signOut } from "firebase/auth"
+import { useToast } from "@/hooks/use-toast"
 
 interface AppSidebarProps {
   role: Role
@@ -35,6 +38,19 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ role, activeView, onViewChange, onLogout }: AppSidebarProps) {
+  const auth = useAuth()
+  const { toast } = useToast()
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth)
+      toast({ title: "Signed Out", description: "You have been successfully logged out." })
+      onLogout()
+    } catch (error) {
+      toast({ title: "Error signing out", variant: "destructive" })
+    }
+  }
+
   const menuItems = React.useMemo(() => {
     const common = [
       { title: "Dashboard", icon: LayoutDashboard, id: "dashboard" },
@@ -106,7 +122,7 @@ export function AppSidebar({ role, activeView, onViewChange, onLogout }: AppSide
         <SidebarSeparator className="mb-2" />
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={onLogout} className="text-destructive hover:text-destructive">
+            <SidebarMenuButton onClick={handleSignOut} className="text-destructive hover:text-destructive">
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
             </SidebarMenuButton>

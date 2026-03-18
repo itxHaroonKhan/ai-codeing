@@ -8,28 +8,33 @@ import { DoctorView } from "@/components/dashboard/doctor-view"
 import { ReceptionistView } from "@/components/dashboard/receptionist-view"
 import { PatientView } from "@/components/dashboard/patient-view"
 import { Role } from "@/lib/mock-data"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
+import { AuthScreen } from "@/components/auth/auth-screen"
+import { useUser, useFirestore, useDoc } from "@/firebase"
+import { doc } from "firebase/firestore"
 import { Button } from "@/components/ui/button"
-import { User, ChevronDown, Stethoscope, Shield, Brain, Activity, ArrowRight } from "lucide-react"
+import { Stethoscope, Activity, Brain, Shield, ArrowRight, Loader2 } from "lucide-react"
 
 export default function Page() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
-  const [role, setRole] = React.useState<Role>('Doctor')
+  const { user, loading: authLoading } = useUser()
+  const db = useFirestore()
+  
+  // Fetch user profile from Firestore to get their role
+  const userProfileRef = React.useMemo(() => (user ? doc(db, "users", user.uid) : null), [db, user])
+  const { data: profile, loading: profileLoading } = useDoc(userProfileRef)
+  
   const [activeView, setActiveView] = React.useState<string>("dashboard")
+  const [showAuth, setShowAuth] = React.useState(false)
 
-  const handleRoleChange = (newRole: Role) => {
-    setRole(newRole)
-    setActiveView("dashboard")
+  if (authLoading || (user && profileLoading)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
-  if (!isLoggedIn) {
+  // Public Landing Page
+  if (!user && !showAuth) {
     return (
       <div className="min-h-screen bg-background">
         <nav className="border-b px-6 py-4 flex justify-between items-center bg-white/50 backdrop-blur-md sticky top-0 z-50">
@@ -42,7 +47,7 @@ export default function Page() {
           <div className="flex gap-4">
             <Button variant="ghost">Features</Button>
             <Button variant="ghost">Pricing</Button>
-            <Button onClick={() => setIsLoggedIn(true)}>Go to Dashboard</Button>
+            <Button onClick={() => setShowAuth(true)}>Sign In</Button>
           </div>
         </nav>
 
@@ -58,8 +63,8 @@ export default function Page() {
             Automate diagnostics, analyze lab reports in seconds, and identify patient risks proactively using our advanced generative AI engine.
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg" onClick={() => setIsLoggedIn(true)} className="h-14 px-8 text-lg gap-2">
-              Start Your Free Trial
+            <Button size="lg" onClick={() => setShowAuth(true)} className="h-14 px-8 text-lg gap-2">
+              Get Started Now
               <ArrowRight className="w-5 h-5" />
             </Button>
             <Button size="lg" variant="outline" className="h-14 px-8 text-lg">
@@ -97,13 +102,21 @@ export default function Page() {
     )
   }
 
+  // Auth Screen (Login/Register)
+  if (!user && showAuth) {
+    return <AuthScreen onBack={() => setShowAuth(false)} />
+  }
+
+  // Dashboard Logic
+  const role = (profile?.role as Role) || 'Patient'
+
   const renderView = () => {
     switch (role) {
       case 'Admin': return <AdminView viewId={activeView} />
       case 'Doctor': return <DoctorView viewId={activeView} />
       case 'Receptionist': return <ReceptionistView viewId={activeView} />
       case 'Patient': return <PatientView viewId={activeView} />
-      default: return <DoctorView viewId={activeView} />
+      default: return <PatientView viewId={activeView} />
     }
   }
 
@@ -113,7 +126,7 @@ export default function Page() {
         role={role} 
         activeView={activeView} 
         onViewChange={setActiveView} 
-        onLogout={() => setIsLoggedIn(false)} 
+        onLogout={() => {}} // Handle logout is done in Sidebar component
       />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
@@ -124,23 +137,10 @@ export default function Page() {
           </div>
           
           <div className="flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <User className="w-4 h-4" />
-                  <span>Switch Role: {role}</span>
-                  <ChevronDown className="w-3 h-3 opacity-50" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Demo Role Selector</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleRoleChange('Admin')}>Admin View</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleRoleChange('Doctor')}>Doctor View</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleRoleChange('Receptionist')}>Receptionist View</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleRoleChange('Patient')}>Patient View</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex flex-col items-end">
+              <span className="text-xs font-bold text-primary">{profile?.name}</span>
+              <span className="text-[10px] text-muted-foreground">{role}</span>
+            </div>
           </div>
         </header>
         
