@@ -13,3 +13,6 @@ This is the comprehensive HealthFlow AI SaaS platform.
 1. Ensure `GEMINI_API_KEY` is set in your environment.
 2. Connect your Firebase project in `src/lib/firebase.ts`.
 3. Run `npm run dev`.
+
+## Repository
+https://github.com/itxHaroonKhan/ai-codeing.git
