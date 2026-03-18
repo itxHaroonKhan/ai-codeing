@@ -1,5 +1,10 @@
-# Firebase Studio
+# ai-codeing
 
-This is a NextJS starter in Firebase Studio.
+This is a HealthFlow AI SaaS platform built with Next.js, Firebase, and GenAI.
 
-To get started, take a look at src/app/page.tsx.
+## Features
+- AI-Powered Diagnostics
+- Automated Risk Flagging
+- PDF Lab Report Analysis
+- Role-based Dashboard (Admin, Doctor, Receptionist, Patient)
+- Real-time Clinic Management
