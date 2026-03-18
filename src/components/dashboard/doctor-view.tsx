@@ -1,10 +1,11 @@
+
 "use client"
 
 import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatsCard } from "./stats-card"
-import { Calendar, Users, FileText, Clock, ShieldAlert, FileSearch, History, Info, Loader2 } from "lucide-react"
+import { Calendar, Users, FileText, Clock, ShieldAlert, FileSearch, History, Info, Loader2, MessageCircle } from "lucide-react"
 import { SmartDiagnosis } from "../diagnosis/smart-diagnosis"
 import { RiskAnalysis } from "../diagnosis/risk-analysis"
 import { PdfAnalysis } from "../diagnosis/pdf-analysis"
@@ -28,6 +29,7 @@ export function DoctorView({ viewId }: { viewId: string }) {
   
   const [isConsultOpen, setIsConsultOpen] = React.useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = React.useState(false)
+  const [isMessagesOpen, setIsMessagesOpen] = React.useState(false)
   const [selectedPatient, setSelectedPatient] = React.useState<any>(null)
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState<string | null>(null)
   const [patientHistory, setPatientHistory] = React.useState<any[]>([])
@@ -104,83 +106,105 @@ export function DoctorView({ viewId }: { viewId: string }) {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-primary">Doctor Workspace</h2>
-          <p className="text-muted-foreground">Clinical queue and smart diagnostic assistance.</p>
+          <h2 className="text-4xl font-black tracking-tighter text-primary uppercase">Clinical Hub</h2>
+          <p className="text-muted-foreground">Managing your daily queue with AI intelligence.</p>
         </div>
+        <Button variant="outline" className="rounded-2xl gap-2" onClick={() => setIsMessagesOpen(true)}>
+          <MessageCircle className="w-4 h-4" />
+          Patient Communications
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard title="Daily Queue" value={appointments?.length || 0} icon={Calendar} />
-        <StatsCard title="Total Patients" value={patients?.length || 0} icon={Users} />
-        <StatsCard title="System Alerts" value="2" icon={ShieldAlert} />
-        <StatsCard title="Docs Pending" value="3" icon={FileSearch} />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard title="Daily Queue" value={appointments?.length || 0} icon={Calendar} className="rounded-3xl border-none shadow-lg" />
+        <StatsCard title="Total Patients" value={patients?.length || 0} icon={Users} className="rounded-3xl border-none shadow-lg" />
+        <StatsCard title="System Alerts" value="2" icon={ShieldAlert} className="rounded-3xl border-none shadow-lg bg-destructive/5" />
+        <StatsCard title="Docs Pending" value="3" icon={FileSearch} className="rounded-3xl border-none shadow-lg" />
       </div>
 
-      <Tabs defaultValue="appointments" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="appointments">Patient Queue</TabsTrigger>
-          <TabsTrigger value="diagnosis">AI Diagnosis</TabsTrigger>
-          <TabsTrigger value="risk">Risk Analysis</TabsTrigger>
-          <TabsTrigger value="pdf">Lab Analyst</TabsTrigger>
+      <Tabs defaultValue="appointments" className="space-y-6">
+        <TabsList className="bg-white dark:bg-slate-800 p-1 rounded-2xl shadow-sm border h-12">
+          <TabsTrigger value="appointments" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white">Patient Queue</TabsTrigger>
+          <TabsTrigger value="diagnosis" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white">Smart Diagnosis</TabsTrigger>
+          <TabsTrigger value="risk" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white">Risk Flagging</TabsTrigger>
+          <TabsTrigger value="pdf" className="rounded-xl px-6 data-[state=active]:bg-primary data-[state=active]:text-white">Lab Analyst</TabsTrigger>
         </TabsList>
         
         <TabsContent value="appointments">
-          <Card>
-            <CardHeader>
+          <Card className="rounded-[2.5rem] border-none shadow-xl bg-white dark:bg-slate-800 p-2">
+            <CardHeader className="px-8 pt-8">
               <CardTitle>Schedule for {todayStr}</CardTitle>
+              <CardDescription>Click consult to start a clinical session.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-8 pb-8">
               <div className="space-y-4">
                 {appointments?.map((app: any) => {
                   const patient = patients?.find((p: any) => p.id === app.patientId)
                   return (
-                    <div key={app.id} className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/30 transition-all">
-                      <div className="flex items-center gap-4">
-                        <div className="bg-primary/10 text-primary w-12 h-12 rounded-lg flex items-center justify-center font-bold">
+                    <div key={app.id} className="flex items-center justify-between p-6 border border-slate-100 dark:border-slate-700 rounded-[2rem] hover:bg-muted/30 transition-all group">
+                      <div className="flex items-center gap-6">
+                        <div className="bg-primary/10 text-primary w-16 h-16 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner">
                           {app.time.split(':')[0]}
                         </div>
                         <div>
-                          <p className="font-bold">{patient?.name || "Patient"}</p>
-                          <p className="text-xs text-muted-foreground">{app.time} • {patient?.gender}</p>
+                          <p className="font-black text-lg text-slate-900 dark:text-white">{patient?.name || "Patient"}</p>
+                          <div className="flex gap-3 mt-1">
+                            <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-widest">{app.time}</Badge>
+                            <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-widest">{patient?.gender}</Badge>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="ghost" onClick={() => fetchPatientHistory(patient)}>History</Button>
-                        <Button size="sm" onClick={() => handleConsult(patient, app.id)}>Consult</Button>
+                      <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" className="rounded-xl h-12 px-6 font-bold" onClick={() => fetchPatientHistory(patient)}>History</Button>
+                        <Button className="rounded-xl h-12 px-8 font-bold shadow-lg shadow-primary/20" onClick={() => handleConsult(patient, app.id)}>Consult</Button>
                       </div>
                     </div>
                   )
                 })}
+                {appointments?.length === 0 && (
+                  <div className="py-20 text-center">
+                    <Calendar className="w-16 h-16 text-muted-foreground/20 mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">No appointments scheduled for today.</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="diagnosis"><SmartDiagnosis /></TabsContent>
-        <TabsContent value="risk"><RiskAnalysis /></TabsContent>
-        <TabsContent value="pdf"><PdfAnalysis /></TabsContent>
+        <TabsContent value="diagnosis" className="animate-in fade-in slide-in-from-bottom-4"><SmartDiagnosis /></TabsContent>
+        <TabsContent value="risk" className="animate-in fade-in slide-in-from-bottom-4"><RiskAnalysis /></TabsContent>
+        <TabsContent value="pdf" className="animate-in fade-in slide-in-from-bottom-4"><PdfAnalysis /></TabsContent>
       </Tabs>
 
       <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Clinical History: {selectedPatient?.name}</DialogTitle>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto rounded-[3rem]">
+          <DialogHeader className="px-4">
+            <DialogTitle className="text-2xl font-black">Clinical History: {selectedPatient?.name}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
-            {loadingHistory ? <Loader2 className="animate-spin mx-auto" /> : (
+          <div className="space-y-6 p-4">
+            {loadingHistory ? <Loader2 className="animate-spin mx-auto w-12 h-12 text-primary" /> : (
               <>
                 {aiSummary && (
-                  <Card className="bg-primary/5 border-primary/20 p-4">
-                    <p className="text-sm font-bold flex items-center gap-2 mb-2"><Info className="w-4 h-4" /> AI Summary</p>
-                    <p className="text-sm italic">{aiSummary.summary}</p>
+                  <Card className="bg-primary/5 border-primary/20 p-6 rounded-[2rem]">
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-sm font-black flex items-center gap-2 text-primary uppercase tracking-widest"><Info className="w-4 h-4" /> AI Summary</p>
+                      <Badge className="bg-primary text-white font-bold">{aiSummary.stabilityScore}</Badge>
+                    </div>
+                    <p className="text-sm leading-relaxed font-medium italic text-slate-700 dark:text-slate-300">"{aiSummary.summary}"</p>
                   </Card>
                 )}
-                {patientHistory.map((h: any) => (
-                  <div key={h.id} className="border p-4 rounded-xl">
-                    <p className="font-bold">{format(h.createdAt?.toDate() || new Date(), 'PPP')}</p>
-                    <p className="text-sm text-muted-foreground">{h.instructions}</p>
-                  </div>
-                ))}
+                <div className="space-y-4">
+                  {patientHistory.map((h: any) => (
+                    <div key={h.id} className="border border-slate-100 dark:border-slate-800 p-6 rounded-[2rem] hover:bg-muted/50 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <p className="font-black text-slate-900 dark:text-white">{format(h.createdAt?.toDate() || new Date(), 'PPP')}</p>
+                        <Badge variant="outline" className="text-[10px] font-bold">DR. {h.doctorId?.slice(0, 4)}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{h.instructions}</p>
+                    </div>
+                  ))}
+                </div>
               </>
             )}
           </div>
@@ -188,21 +212,46 @@ export function DoctorView({ viewId }: { viewId: string }) {
       </Dialog>
 
       <Dialog open={isConsultOpen} onOpenChange={setIsConsultOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader><DialogTitle>Consultation: {selectedPatient?.name}</DialogTitle></DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Observations</Label>
-              <Textarea placeholder="Clinical notes..." value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <DialogContent className="max-w-2xl rounded-[3rem]">
+          <DialogHeader><DialogTitle className="text-2xl font-black">Clinical Consultation</DialogTitle></DialogHeader>
+          <div className="grid gap-6 py-6">
+            <div className="space-y-3">
+              <Label className="font-bold text-slate-700 dark:text-slate-300">Chief Complaints & Observations</Label>
+              <Textarea 
+                placeholder="Type clinical findings here..." 
+                value={notes} 
+                onChange={(e) => setNotes(e.target.value)} 
+                className="min-h-[150px] rounded-[1.5rem] p-4 bg-slate-50 dark:bg-slate-900 border-none shadow-inner"
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input placeholder="Medicine" value={medName} onChange={(e) => setMedName(e.target.value)} />
-              <Input placeholder="Dosage" value={dosage} onChange={(e) => setDosage(e.target.value)} />
+              <div className="space-y-2">
+                <Label className="text-xs font-bold uppercase tracking-widest text-primary">Medicine</Label>
+                <Input placeholder="e.g. Amoxicillin" value={medName} onChange={(e) => setMedName(e.target.value)} className="rounded-xl h-12" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold uppercase tracking-widest text-primary">Dosage</Label>
+                <Input placeholder="e.g. 500mg BID" value={dosage} onChange={(e) => setDosage(e.target.value)} className="rounded-xl h-12" />
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button onClick={handleSaveConsult}>Finalize Consult</Button>
+          <DialogFooter className="gap-2">
+            <Button variant="ghost" onClick={() => setIsConsultOpen(false)} className="rounded-xl">Discard</Button>
+            <Button onClick={handleSaveConsult} className="rounded-xl h-12 px-10 font-bold shadow-xl shadow-primary/20">Finalize Patient Consult</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isMessagesOpen} onOpenChange={setIsMessagesOpen}>
+        <DialogContent className="max-w-md rounded-[2.5rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black">Messages</DialogTitle>
+          </DialogHeader>
+          <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 opacity-50">
+            <MessageCircle className="w-16 h-16 mb-4 text-primary" />
+            <p className="font-bold">Patient Chat System</p>
+            <p className="text-sm">Secure direct messaging is being initialized.</p>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
