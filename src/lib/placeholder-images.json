@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Modern clean clinic interior",
+      "imageUrl": "https://picsum.photos/seed/medical1/1200/800",
+      "imageHint": "modern clinic"
+    },
+    {
+      "id": "ai-brain",
+      "description": "Digital medical intelligence visualization",
+      "imageUrl": "https://picsum.photos/seed/ai2/600/400",
+      "imageHint": "medical ai"
+    }
+  ]
 }
