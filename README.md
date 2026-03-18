@@ -1,19 +1,15 @@
-# HealthFlow AI
+# ai-codeing
 
-This is a comprehensive HealthFlow AI SaaS platform built with Next.js, Firebase, and GenAI.
+This is the comprehensive HealthFlow AI SaaS platform.
 
 ## Features
-- **Smart Diagnosis**: AI-assisted symptom analysis for doctors.
-- **Risk Flagging**: Automated medical history analysis to identify chronic patterns.
-- **PDF Lab Analysis**: Intelligent extraction of findings from medical PDF reports.
-- **Role-Based Portals**:
-  - **Admin**: System analytics and staff management.
-  - **Doctor**: Appointment management and AI clinical tools.
-  - **Receptionist**: Patient onboarding and clinic scheduling.
-  - **Patient**: Medical records, prescriptions, and AI medication explanations.
-- **Real-Time Database**: Powered by Firestore.
+- **Smart AI Diagnosis**: Intelligent symptom analysis for medical professionals.
+- **AI Risk Flagging**: Proactive identification of chronic patient risk patterns.
+- **PDF Lab Analysis**: Automated extraction of insights from medical documents.
+- **Patient Portal**: Clear, AI-driven explanations of prescriptions and health history.
+- **Admin/Staff Management**: Full clinic operational control.
 
-## Getting Started
-1. Set your `GEMINI_API_KEY` in `.env`.
-2. Run `npm run dev` to start the development server.
-3. Use the role switcher in the header to navigate different perspectives.
+## Deployment
+1. Ensure `GEMINI_API_KEY` is set in your environment.
+2. Connect your Firebase project in `src/lib/firebase.ts`.
+3. Run `npm run dev`.
