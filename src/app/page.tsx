@@ -35,7 +35,6 @@ export default function Page() {
     )
   }
 
-  // Public Landing Page
   if (!user && !showAuth) {
     return (
       <div className="min-h-screen bg-background selection:bg-primary/20">
@@ -64,7 +63,7 @@ export default function Page() {
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">Simplified.</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed">
-            Empower your clinic with automated diagnostics, smart risk flagging, and AI-explained prescriptions. The only EHR you'll ever need.
+            Empower your clinic with automated diagnostics, smart risk flagging, and AI-explained prescriptions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button size="lg" onClick={() => setShowAuth(true)} className="h-16 px-10 text-lg gap-2 rounded-2xl shadow-xl shadow-primary/30 group">
@@ -84,48 +83,32 @@ export default function Page() {
                 <Brain className="text-primary w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Smart Diagnostics</h3>
-              <p className="text-slate-500 leading-relaxed">AI-driven symptom analysis that assists doctors in identifying rare patterns and suggesting optimal lab tests.</p>
+              <p className="text-slate-500 leading-relaxed">AI-driven symptom analysis that assists doctors in identifying rare patterns.</p>
             </div>
             <div className="p-10 bg-white rounded-[2rem] border shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
               <div className="bg-accent/10 w-14 h-14 rounded-2xl flex items-center justify-center mb-8">
                 <Shield className="text-accent w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Risk Flagging</h3>
-              <p className="text-slate-500 leading-relaxed">Continuous clinical surveillance that alerts providers to high-risk medication combinations or chronic trends.</p>
+              <p className="text-slate-500 leading-relaxed">Continuous clinical surveillance that alerts providers to high-risk trends.</p>
             </div>
             <div className="p-10 bg-white rounded-[2rem] border shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
               <div className="bg-emerald-50 w-14 h-14 rounded-2xl flex items-center justify-center mb-8">
                 <HeartPulse className="text-emerald-500 w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Patient Portal</h3>
-              <p className="text-slate-500 leading-relaxed">Empower patients with AI health snapshots and easy-to-understand medication guides in plain language.</p>
+              <p className="text-slate-500 leading-relaxed">Empower patients with AI health snapshots and easy-to-understand guides.</p>
             </div>
           </div>
         </section>
-
-        <footer className="border-t py-12 px-6 bg-slate-50">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-2">
-              <Stethoscope className="text-primary w-5 h-5" />
-              <span className="font-bold">HealthFlow AI</span>
-            </div>
-            <div className="flex gap-8 text-sm text-slate-500">
-              <span>© 2024 All Rights Reserved</span>
-              <a href="#" className="hover:text-primary">Privacy</a>
-              <a href="#" className="hover:text-primary">Terms</a>
-            </div>
-          </div>
-        </footer>
       </div>
     )
   }
 
-  // Auth Screen
   if (!user && showAuth) {
     return <AuthScreen onBack={() => setShowAuth(false)} />
   }
 
-  // Dashboard Logic
   const role = (profile?.role as Role) || 'Patient'
 
   const renderView = () => {
