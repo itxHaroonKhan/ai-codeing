@@ -3,9 +3,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatsCard } from "./stats-card"
-import { Calendar, Users, FileText, Clock, Plus, ShieldAlert } from "lucide-react"
+import { Calendar, Users, FileText, Clock, Plus, ShieldAlert, FileSearch } from "lucide-react"
 import { SmartDiagnosis } from "../diagnosis/smart-diagnosis"
 import { RiskAnalysis } from "../diagnosis/risk-analysis"
+import { PdfAnalysis } from "../diagnosis/pdf-analysis"
 import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from "@/lib/mock-data"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
@@ -55,12 +56,16 @@ export function DoctorView() {
       </div>
 
       <Tabs defaultValue="appointments" className="space-y-4">
-        <TabsList className="bg-muted p-1">
+        <TabsList className="bg-muted p-1 flex flex-wrap h-auto">
           <TabsTrigger value="appointments">Today's Appointments</TabsTrigger>
           <TabsTrigger value="diagnosis">AI Diagnosis Assistant</TabsTrigger>
           <TabsTrigger value="risk" className="gap-2">
             <ShieldAlert className="w-3.5 h-3.5" />
             Risk Analysis
+          </TabsTrigger>
+          <TabsTrigger value="pdf" className="gap-2">
+            <FileSearch className="w-3.5 h-3.5" />
+            PDF Lab Analysis
           </TabsTrigger>
           <TabsTrigger value="history">Patient History</TabsTrigger>
         </TabsList>
@@ -106,6 +111,10 @@ export function DoctorView() {
 
         <TabsContent value="risk">
           <RiskAnalysis />
+        </TabsContent>
+
+        <TabsContent value="pdf">
+          <PdfAnalysis />
         </TabsContent>
 
         <TabsContent value="history">
