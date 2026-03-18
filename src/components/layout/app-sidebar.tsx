@@ -8,11 +8,12 @@ import {
   FileText, 
   Settings, 
   Stethoscope, 
-  ShieldCheck,
   LogOut,
   Activity,
   CreditCard,
-  UserCircle
+  UserCircle,
+  MessageCircle,
+  HelpCircle
 } from "lucide-react"
 
 import {
@@ -71,7 +72,7 @@ export function AppSidebar({ role, activeView, onViewChange, onLogout }: AppSide
           ...common,
           { title: "Appointments", icon: Calendar, id: "appointments" },
           { title: "Patient Records", icon: Users, id: "patients" },
-          { title: "Prescriptions", icon: FileText, id: "prescriptions" },
+          { title: "Messages", icon: MessageCircle, id: "messages" },
         ]
       case 'Receptionist':
         return [
@@ -85,6 +86,7 @@ export function AppSidebar({ role, activeView, onViewChange, onLogout }: AppSide
           { title: "My History", icon: Calendar, id: "history" },
           { title: "Prescriptions", icon: FileText, id: "prescriptions" },
           { title: "Health Profile", icon: UserCircle, id: "profile" },
+          { title: "Support", icon: HelpCircle, id: "support" },
         ]
       default:
         return common
