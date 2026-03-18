@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatsCard } from "./stats-card"
-import { Users, Stethoscope, DollarSign, Activity, TrendingUp } from "lucide-react"
+import { Users, Stethoscope, DollarSign, Activity } from "lucide-react"
 import { 
   BarChart, 
   Bar, 
@@ -12,8 +12,7 @@ import {
   Tooltip, 
   ResponsiveContainer,
   LineChart,
-  Line,
-  Cell
+  Line
 } from 'recharts'
 
 const data = [
@@ -24,8 +23,6 @@ const data = [
   { name: 'May', appointments: 189, revenue: 4800 },
   { name: 'Jun', appointments: 239, revenue: 3800 },
 ];
-
-const COLORS = ['#2E6DA4', '#7B68EE', '#4CAF50', '#FF9800'];
 
 export function AdminView() {
   return (
@@ -74,7 +71,7 @@ export function AdminView() {
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
                 <Tooltip />
                 <Line type="monotone" dataKey="revenue" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: 'hsl(var(--accent))' }} />
-              </BarChart>
+              </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
