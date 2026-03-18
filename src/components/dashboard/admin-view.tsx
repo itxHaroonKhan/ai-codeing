@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatsCard } from "./stats-card"
-import { Users, Stethoscope, DollarSign, Activity } from "lucide-react"
+import { Users, Stethoscope, DollarSign, Activity, UserPlus, MoreHorizontal, BadgeCheck } from "lucide-react"
 import { 
   BarChart, 
   Bar, 
@@ -14,6 +14,10 @@ import {
   LineChart,
   Line
 } from 'recharts'
+import { MOCK_USERS } from "@/lib/mock-data"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 const data = [
   { name: 'Jan', appointments: 400, revenue: 2400 },
@@ -24,7 +28,67 @@ const data = [
   { name: 'Jun', appointments: 239, revenue: 3800 },
 ];
 
-export function AdminView() {
+export function AdminView({ viewId }: { viewId: string }) {
+  if (viewId === 'doctors' || viewId === 'staff') {
+    const list = MOCK_USERS.filter(u => viewId === 'doctors' ? u.role === 'Doctor' : u.role !== 'Patient')
+    
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">{viewId === 'doctors' ? 'Doctors' : 'Staff'} Directory</h2>
+            <p className="text-muted-foreground">Manage your clinic's medical professionals and staff.</p>
+          </div>
+          <Button>
+            <UserPlus className="w-4 h-4 mr-2" />
+            Add {viewId === 'doctors' ? 'Doctor' : 'Staff'}
+          </Button>
+        </div>
+
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {list.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        {user.name}
+                        {user.subscriptionPlan === 'Pro' && <BadgeCheck className="w-4 h-4 text-primary" />}
+                      </div>
+                      {user.specialty && <p className="text-xs text-muted-foreground">{user.specialty}</p>}
+                    </TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
+                        {user.status || 'Active'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>

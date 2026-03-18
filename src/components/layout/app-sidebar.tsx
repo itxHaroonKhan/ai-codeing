@@ -11,7 +11,8 @@ import {
   ShieldCheck,
   LogOut,
   Activity,
-  CreditCard
+  CreditCard,
+  UserCircle
 } from "lucide-react"
 
 import {
@@ -28,10 +29,12 @@ import { Role } from "@/lib/mock-data"
 
 interface AppSidebarProps {
   role: Role
+  activeView: string
+  onViewChange: (view: string) => void
   onLogout: () => void
 }
 
-export function AppSidebar({ role, onLogout }: AppSidebarProps) {
+export function AppSidebar({ role, activeView, onViewChange, onLogout }: AppSidebarProps) {
   const menuItems = React.useMemo(() => {
     const common = [
       { title: "Dashboard", icon: LayoutDashboard, id: "dashboard" },
@@ -44,7 +47,7 @@ export function AppSidebar({ role, onLogout }: AppSidebarProps) {
           { title: "Manage Doctors", icon: Stethoscope, id: "doctors" },
           { title: "Staff Directory", icon: Users, id: "staff" },
           { title: "Subscriptions", icon: CreditCard, id: "subscriptions" },
-          { title: "System Analytics", icon: Activity, id: "analytics" },
+          { title: "Analytics", icon: Activity, id: "analytics" },
           { title: "Settings", icon: Settings, id: "settings" },
         ]
       case 'Doctor':
@@ -53,21 +56,19 @@ export function AppSidebar({ role, onLogout }: AppSidebarProps) {
           { title: "Appointments", icon: Calendar, id: "appointments" },
           { title: "Patient Records", icon: Users, id: "patients" },
           { title: "Prescriptions", icon: FileText, id: "prescriptions" },
-          { title: "My Stats", icon: Activity, id: "stats" },
         ]
       case 'Receptionist':
         return [
           ...common,
           { title: "Daily Schedule", icon: Calendar, id: "schedule" },
-          { title: "Patient Registration", icon: Users, id: "patients" },
-          { title: "Waitlist", icon: Activity, id: "waitlist" },
+          { title: "Patients", icon: Users, id: "patients" },
         ]
       case 'Patient':
         return [
           ...common,
           { title: "My History", icon: Calendar, id: "history" },
           { title: "Prescriptions", icon: FileText, id: "prescriptions" },
-          { title: "Health Profile", icon: Users, id: "profile" },
+          { title: "Health Profile", icon: UserCircle, id: "profile" },
         ]
       default:
         return common
@@ -89,7 +90,11 @@ export function AppSidebar({ role, onLogout }: AppSidebarProps) {
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.id}>
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuButton 
+                tooltip={item.title}
+                isActive={activeView === item.id}
+                onClick={() => onViewChange(item.id)}
+              >
                 <item.icon className="w-4 h-4" />
                 <span>{item.title}</span>
               </SidebarMenuButton>

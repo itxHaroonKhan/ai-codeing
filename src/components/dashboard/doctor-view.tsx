@@ -10,9 +10,49 @@ import { PdfAnalysis } from "../diagnosis/pdf-analysis"
 import { MOCK_APPOINTMENTS, MOCK_PATIENTS } from "@/lib/mock-data"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-export function DoctorView() {
+export function DoctorView({ viewId }: { viewId: string }) {
   const dailyAppointments = MOCK_APPOINTMENTS.filter(a => a.date === '2024-05-20')
+
+  if (viewId === 'patients') {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Patient Records</h2>
+          <p className="text-muted-foreground">Comprehensive list of all your patients.</p>
+        </div>
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Age/Gender</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Last Visit</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {MOCK_PATIENTS.map((p) => (
+                  <TableRow key={p.id}>
+                    <TableCell className="font-medium">{p.name}</TableCell>
+                    <TableCell>{p.age}y / {p.gender}</TableCell>
+                    <TableCell>{p.contact}</TableCell>
+                    <TableCell>May 20, 2024</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="outline" size="sm">View History</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -67,7 +107,6 @@ export function DoctorView() {
             <FileSearch className="w-3.5 h-3.5" />
             PDF Lab Analysis
           </TabsTrigger>
-          <TabsTrigger value="history">Patient History</TabsTrigger>
         </TabsList>
         
         <TabsContent value="appointments" className="space-y-4">
@@ -115,20 +154,6 @@ export function DoctorView() {
 
         <TabsContent value="pdf">
           <PdfAnalysis />
-        </TabsContent>
-
-        <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Patient Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12 bg-muted/20 rounded-lg border-2 border-dashed">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
-                <p className="text-sm text-muted-foreground">Select a patient to view detailed medical history timeline.</p>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

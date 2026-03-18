@@ -6,6 +6,8 @@ export interface User {
   email: string;
   role: Role;
   subscriptionPlan: 'Free' | 'Pro';
+  specialty?: string;
+  status?: 'active' | 'on-leave' | 'inactive';
 }
 
 export interface Patient {
@@ -15,6 +17,9 @@ export interface Patient {
   gender: string;
   contact: string;
   email: string;
+  address?: string;
+  bloodGroup?: string;
+  allergies?: string[];
   createdAt: string;
 }
 
@@ -43,16 +48,48 @@ export interface Prescription {
 }
 
 export const MOCK_USERS: User[] = [
-  { id: '1', name: 'Admin User', email: 'admin@healthflow.ai', role: 'Admin', subscriptionPlan: 'Pro' },
-  { id: '2', name: 'Dr. Sarah Smith', email: 'sarah@healthflow.ai', role: 'Doctor', subscriptionPlan: 'Pro' },
-  { id: '3', name: 'John Doe', email: 'reception@healthflow.ai', role: 'Receptionist', subscriptionPlan: 'Free' },
-  { id: '4', name: 'Alice Patient', email: 'alice@gmail.com', role: 'Patient', subscriptionPlan: 'Free' },
+  { id: '1', name: 'Admin User', email: 'admin@healthflow.ai', role: 'Admin', subscriptionPlan: 'Pro', status: 'active' },
+  { id: '2', name: 'Dr. Sarah Smith', email: 'sarah@healthflow.ai', role: 'Doctor', subscriptionPlan: 'Pro', specialty: 'Cardiology', status: 'active' },
+  { id: '3', name: 'Dr. James Wilson', email: 'james@healthflow.ai', role: 'Doctor', subscriptionPlan: 'Pro', specialty: 'Pediatrics', status: 'active' },
+  { id: '4', name: 'John Reception', email: 'reception@healthflow.ai', role: 'Receptionist', subscriptionPlan: 'Free', status: 'active' },
+  { id: '5', name: 'Alice Patient', email: 'alice@gmail.com', role: 'Patient', subscriptionPlan: 'Free' },
 ];
 
 export const MOCK_PATIENTS: Patient[] = [
-  { id: 'p1', name: 'Alice Johnson', age: 28, gender: 'Female', contact: '+1234567890', email: 'alice@gmail.com', createdAt: '2023-10-01' },
-  { id: 'p2', name: 'Bob Wilson', age: 45, gender: 'Male', contact: '+1987654321', email: 'bob@gmail.com', createdAt: '2023-11-15' },
-  { id: 'p3', name: 'Charlie Davis', age: 12, gender: 'Male', contact: '+1122334455', email: 'charlie@gmail.com', createdAt: '2024-01-20' },
+  { 
+    id: 'p1', 
+    name: 'Alice Johnson', 
+    age: 28, 
+    gender: 'Female', 
+    contact: '+1234567890', 
+    email: 'alice@gmail.com', 
+    address: '123 Health St, Wellness City',
+    bloodGroup: 'O+',
+    allergies: ['Peanuts', 'Penicillin'],
+    createdAt: '2023-10-01' 
+  },
+  { 
+    id: 'p2', 
+    name: 'Bob Wilson', 
+    age: 45, 
+    gender: 'Male', 
+    contact: '+1987654321', 
+    email: 'bob@gmail.com', 
+    address: '456 Vitality Ave, Cure Town',
+    bloodGroup: 'A-',
+    createdAt: '2023-11-15' 
+  },
+  { 
+    id: 'p3', 
+    name: 'Charlie Davis', 
+    age: 12, 
+    gender: 'Male', 
+    contact: '+1122334455', 
+    email: 'charlie@gmail.com', 
+    address: '789 Growth Rd, Future Heights',
+    bloodGroup: 'B+',
+    createdAt: '2024-01-20' 
+  },
 ];
 
 export const MOCK_APPOINTMENTS: Appointment[] = [

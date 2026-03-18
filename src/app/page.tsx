@@ -21,20 +21,31 @@ import { User, ChevronDown } from "lucide-react"
 
 export default function DashboardPage() {
   const [role, setRole] = React.useState<Role>('Doctor')
+  const [activeView, setActiveView] = React.useState<string>("dashboard")
+
+  const handleRoleChange = (newRole: Role) => {
+    setRole(newRole)
+    setActiveView("dashboard")
+  }
 
   const renderView = () => {
     switch (role) {
-      case 'Admin': return <AdminView />
-      case 'Doctor': return <DoctorView />
-      case 'Receptionist': return <ReceptionistView />
-      case 'Patient': return <PatientView />
-      default: return <DoctorView />
+      case 'Admin': return <AdminView viewId={activeView} />
+      case 'Doctor': return <DoctorView viewId={activeView} />
+      case 'Receptionist': return <ReceptionistView viewId={activeView} />
+      case 'Patient': return <PatientView viewId={activeView} />
+      default: return <DoctorView viewId={activeView} />
     }
   }
 
   return (
     <SidebarProvider>
-      <AppSidebar role={role} onLogout={() => alert("Logging out...")} />
+      <AppSidebar 
+        role={role} 
+        activeView={activeView} 
+        onViewChange={setActiveView} 
+        onLogout={() => alert("Logging out...")} 
+      />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
           <div className="flex items-center gap-2">
@@ -55,10 +66,10 @@ export default function DashboardPage() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>Demo Role Selector</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setRole('Admin')}>Admin View</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRole('Doctor')}>Doctor View</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRole('Receptionist')}>Receptionist View</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRole('Patient')}>Patient View</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleChange('Admin')}>Admin View</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleChange('Doctor')}>Doctor View</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleChange('Receptionist')}>Receptionist View</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleChange('Patient')}>Patient View</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
