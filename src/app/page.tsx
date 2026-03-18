@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -33,7 +32,6 @@ export default function Page() {
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-background">
-        {/* Navigation */}
         <nav className="border-b px-6 py-4 flex justify-between items-center bg-white/50 backdrop-blur-md sticky top-0 z-50">
           <div className="flex items-center gap-2">
             <div className="bg-primary p-1.5 rounded-lg">
@@ -48,9 +46,8 @@ export default function Page() {
           </div>
         </nav>
 
-        {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-1.5 rounded-full text-sm font-semibold mb-8 animate-bounce">
+          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-1.5 rounded-full text-sm font-semibold mb-8">
             <Activity className="w-4 h-4" />
             Next-Gen Clinic Management
           </div>
@@ -71,7 +68,6 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Features Grid */}
         <section className="bg-muted/30 py-20 px-6">
           <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-left">
             <div className="bg-white p-8 rounded-2xl shadow-sm border">
